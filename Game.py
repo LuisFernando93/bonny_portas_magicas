@@ -5,20 +5,24 @@ def player( playerX, playerY):
     playerImg = pygame.Surface((32, 32))
     screen.blit(playerImg, (playerX, playerY))
 
-def message(txt):
+def message(txt, posX, posY):
 
     text = fonte.render(txt, True, (255,255,255))
-    screen.blit(text, (WIDTH/2,HEIGHT/2))
+    screen.blit(text, (posX,posY))
 
 pygame.init()
 
 WIDTH = 800
 HEIGHT = 600
-fonte = pygame.font.SysFont("comicsansms", 20)
+fonte = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+timer = pygame.time.Clock()
 
 gameState = "NORMAL"
 running = True
+pygame.time.set_timer(pygame.USEREVENT, 1000)
+contador = 10
+textoContador = str(contador).rjust(3)
 saidaAEsquerda = randint(0, 1)
 
 playerX = 384.0
@@ -32,7 +36,7 @@ playerAction = False
 
 while running:
     if gameState == "NORMAL":
-        screen.fill((0, 255, 0))
+        screen.fill((0, 124, 0))
         if saidaAEsquerda == 1:
             pygame.draw.rect(screen, (0, 0, 255), (302, 180, 64, 64), 0)
             pygame.draw.rect(screen, (255, 0, 0), (482, 180, 64, 64), 0)
@@ -41,6 +45,12 @@ while running:
             pygame.draw.rect(screen, (0, 0, 255), (482, 180, 64, 64), 0)
 
         for event in pygame.event.get():
+            if event.type == pygame.USEREVENT:
+                contador -= 1
+                if contador > -1:
+                    textoContador = str(contador).rjust(3)
+                else:
+                    gameState = "GAME OVER"
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -86,11 +96,17 @@ while running:
             playerY = 0
 
         player(playerX, playerY)
+        message(textoContador, 700, 30)
     elif gameState == "GAME OVER":
         screen.fill((0,0,0))
-        message("Voce perdeu!")
+        message("Voce perdeu!",WIDTH/2,HEIGHT/2)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+    elif gameState == "VITORIA":
+        screen.fill((0, 0, 0))
+        message("Voce venceu!", WIDTH / 2, HEIGHT / 2)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
     pygame.display.update()
