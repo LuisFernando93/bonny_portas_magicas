@@ -1,29 +1,39 @@
 import pygame
+import math
 from random import randint
 
-def player( playerX, playerY):
+def player(playerX, playerY):
+
     playerImg = pygame.Surface((32, 32))
     screen.blit(playerImg, (playerX, playerY))
 
 def message(txt, posX, posY):
 
-    text = fonte.render(txt, True, (255,255,255))
+    text = font.render(txt, True, (255, 255, 255))
     screen.blit(text, (posX,posY))
+
+def isColliding(x1 , y1 , x2 , y2):
+    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    if distance < 32:
+        return True
+    else:
+        return False
 
 pygame.init()
 
-WIDTH = 800
+WIDTH = 965
 HEIGHT = 600
-fonte = pygame.font.SysFont("Consolas", 20)
+#stage = pygame.image.load("stage.png")
+font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 timer = pygame.time.Clock()
 
 gameState = "NORMAL"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
-contador = 10
-textoContador = str(contador).rjust(3)
-saidaAEsquerda = randint(0, 1)
+counter = 10
+textCounter = str(counter).rjust(3)
+exitLeft = randint(0, 1)
 
 playerX = 384.0
 playerY = 284.0
@@ -37,7 +47,8 @@ playerAction = False
 while running:
     if gameState == "NORMAL":
         screen.fill((0, 124, 0))
-        if saidaAEsquerda == 1:
+        #screen.blit(stage,(0,0))
+        if exitLeft == 1:
             pygame.draw.rect(screen, (0, 0, 255), (302, 180, 64, 64), 0)
             pygame.draw.rect(screen, (255, 0, 0), (482, 180, 64, 64), 0)
         else:
@@ -46,9 +57,9 @@ while running:
 
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
-                contador -= 1
-                if contador > -1:
-                    textoContador = str(contador).rjust(3)
+                counter -= 1
+                if counter > -1:
+                    textCounter = str(counter).rjust(3)
                 else:
                     gameState = "GAME OVER"
             if event.type == pygame.QUIT:
@@ -96,7 +107,7 @@ while running:
             playerY = 0
 
         player(playerX, playerY)
-        message(textoContador, 700, 30)
+        message(textCounter, 700, 30)
     elif gameState == "GAME OVER":
         screen.fill((0,0,0))
         message("Voce perdeu!",WIDTH/2,HEIGHT/2)
