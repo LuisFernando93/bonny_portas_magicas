@@ -2,10 +2,18 @@ import pygame
 import math
 from random import randint
 
-def player(playerX, playerY):
+def player(refX, refY):
 
     playerImg = pygame.Surface((32, 32))
-    screen.blit(playerImg, (playerX, playerY))
+    screen.blit(playerImg, (refX, refY))
+
+def trueDoor(refX, refY):
+    trueDoorImg = ""
+    screen.blit(trueDoorImg, (refX,refY))
+
+def fakeDoor(refX, refY):
+    fakeDoorImg = ""
+    screen.blit(fakeDoorImg, (refX, refY))
 
 def message(txt, posX, posY):
 
@@ -14,18 +22,23 @@ def message(txt, posX, posY):
 
 def isColliding(x1 , y1 , x2 , y2):
     distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-    if distance < 32:
+    if distance < 45:
         return True
     else:
         return False
 
+def openDoor():
+    return False
+
 pygame.init()
 
-WIDTH = 965
-HEIGHT = 600
-#stage = pygame.image.load("stage.png")
+WIDTH = 332
+HEIGHT = 202
+SCALE = 3
+stage = pygame.image.load("stage.png")
+stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE))
 timer = pygame.time.Clock()
 
 gameState = "NORMAL"
@@ -46,8 +59,8 @@ playerAction = False
 
 while running:
     if gameState == "NORMAL":
-        screen.fill((0, 124, 0))
-        #screen.blit(stage,(0,0))
+        screen.fill((0, 0, 0))
+        screen.blit(stage,(0,0))
         if exitLeft == 1:
             pygame.draw.rect(screen, (0, 0, 255), (302, 180, 64, 64), 0)
             pygame.draw.rect(screen, (255, 0, 0), (482, 180, 64, 64), 0)
@@ -87,7 +100,6 @@ while running:
                     playerLeft = False
                 if event.key == pygame.K_SPACE:
                     playerAction = False
-
         if playerUp:
             playerY -= speed
         if playerDown:
