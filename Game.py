@@ -4,7 +4,8 @@ from random import randint
 
 def player(refX, refY):
 
-    playerImg = pygame.Surface((32, 32))
+    playerImg = pygame.image.load("player.png")
+    playerImg = pygame.transform.scale(playerImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(playerImg, (refX, refY))
 
 def trueDoor(refX, refY):
@@ -35,6 +36,7 @@ pygame.init()
 WIDTH = 332
 HEIGHT = 202
 SCALE = 3
+RESOLUTION = 32
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
@@ -44,13 +46,13 @@ timer = pygame.time.Clock()
 gameState = "NORMAL"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
-counter = 10
+counter = 30
 textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
 
-playerX = 384.0
-playerY = 284.0
-speed = 0.8
+playerX = 150*SCALE
+playerY = 170*SCALE
+speed = 5
 playerUp = False
 playerDown = False
 playerRight = False
@@ -62,11 +64,11 @@ while running:
         screen.fill((0, 0, 0))
         screen.blit(stage,(0,0))
         if exitLeft == 1:
-            pygame.draw.rect(screen, (0, 0, 255), (302, 180, 64, 64), 0)
-            pygame.draw.rect(screen, (255, 0, 0), (482, 180, 64, 64), 0)
+            pygame.draw.rect(screen, (0, 0, 255), (102*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (255, 0, 0), (196*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), (302, 180, 64, 64), 0)
-            pygame.draw.rect(screen, (0, 0, 255), (482, 180, 64, 64), 0)
+            pygame.draw.rect(screen, (255, 0, 0), (102*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (0, 0, 255), (196*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
 
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
