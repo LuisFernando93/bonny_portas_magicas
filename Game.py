@@ -4,7 +4,7 @@ from random import randint
 
 def player(refX, refY):
 
-    playerImg = pygame.image.load("player.png")
+    playerImg = spritesheet.subsurface((0,0,RESOLUTION,RESOLUTION))
     playerImg = pygame.transform.scale(playerImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(playerImg, (refX, refY))
 
@@ -19,7 +19,7 @@ def fakeDoor(refX, refY):
 def message(txt, posX, posY):
 
     text = font.render(txt, True, (255, 255, 255))
-    screen.blit(text, (posX,posY))
+    screen.blit(text, (posX*SCALE,posY*SCALE))
 
 def isColliding(x1 , y1 , x2 , y2):
     distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
@@ -33,14 +33,17 @@ def openDoor():
 
 pygame.init()
 
-WIDTH = 332
-HEIGHT = 202
-SCALE = 3
+spritesheet = pygame.image.load("spritesheet.png")
+
+
+WIDTH = 512
+HEIGHT = 256
+SCALE = 2
 RESOLUTION = 32
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
-screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE))
+screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE),0,32)
 timer = pygame.time.Clock()
 
 gameState = "NORMAL"
@@ -52,7 +55,7 @@ exitLeft = randint(0, 1)
 
 playerX = 150*SCALE
 playerY = 170*SCALE
-speed = 5
+speed = 1
 playerUp = False
 playerDown = False
 playerRight = False
@@ -64,11 +67,11 @@ while running:
         screen.fill((0, 0, 0))
         screen.blit(stage,(0,0))
         if exitLeft == 1:
-            pygame.draw.rect(screen, (0, 0, 255), (102*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
-            pygame.draw.rect(screen, (255, 0, 0), (196*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (0, 0, 255), (176*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (255, 0, 0), (306*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), (102*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
-            pygame.draw.rect(screen, (0, 0, 255), (196*SCALE, 103*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (255, 0, 0), (176*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            pygame.draw.rect(screen, (0, 0, 255), (306*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
 
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
@@ -111,17 +114,17 @@ while running:
         if playerLeft:
             playerX -= speed
 
-        if playerX > 768:
-            playerX = 768
+        if playerX > (WIDTH - RESOLUTION)*SCALE:
+            playerX = (WIDTH - RESOLUTION)*SCALE
         if playerX < 0:
             playerX = 0
-        if playerY > 568:
-            playerY = 568
+        if playerY > (HEIGHT - RESOLUTION)*SCALE:
+            playerY = (HEIGHT - RESOLUTION)*SCALE
         if playerY < 0:
             playerY = 0
 
         player(playerX, playerY)
-        message(textCounter, 700, 30)
+        message(textCounter, WIDTH - 30, 10)
     elif gameState == "GAME OVER":
         screen.fill((0,0,0))
         message("Voce perdeu!",WIDTH/2,HEIGHT/2)
