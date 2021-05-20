@@ -4,7 +4,10 @@ from random import randint
 
 def player(refX, refY):
 
-    playerImg = spritesheet.subsurface((0,0,RESOLUTION,RESOLUTION))
+    if playerLookLeft:
+        playerImg = spritesheet.subsurface((0,0,RESOLUTION,RESOLUTION))
+    else:
+        playerImg = spritesheet.subsurface((0,32,RESOLUTION,RESOLUTION))
     playerImg = pygame.transform.scale(playerImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(playerImg, (refX, refY))
 
@@ -61,6 +64,7 @@ playerDown = False
 playerRight = False
 playerLeft = False
 playerAction = False
+playerLookLeft = True
 
 while running:
     if gameState == "NORMAL":
@@ -89,8 +93,10 @@ while running:
                     playerDown = True
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     playerRight = True
+                    playerLookLeft = False
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     playerLeft = True
+                    playerLookLeft = True
                 if event.key == pygame.K_SPACE:
                     playerAction = True
 
