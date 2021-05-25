@@ -12,12 +12,12 @@ def player(refX, refY):
     screen.blit(playerImg, (refX, refY))
 
 def trueDoor(refX, refY):
-    trueDoorImg = spritesheet.subsurface((5*32,0,RESOLUTION,RESOLUTION))
+    trueDoorImg = spritesheet.subsurface((5*32,32,RESOLUTION,RESOLUTION))
     trueDoorImg = pygame.transform.scale(trueDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(trueDoorImg, (refX,refY))
 
 def fakeDoor(refX, refY):
-    fakeDoorImg = spritesheet.subsurface((6*32,0,RESOLUTION,RESOLUTION))
+    fakeDoorImg = spritesheet.subsurface((6*32,32,RESOLUTION,RESOLUTION))
     fakeDoorImg = pygame.transform.scale(fakeDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(fakeDoorImg, (refX, refY))
 
