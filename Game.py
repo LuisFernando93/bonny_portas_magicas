@@ -12,11 +12,13 @@ def player(refX, refY):
     screen.blit(playerImg, (refX, refY))
 
 def trueDoor(refX, refY):
-    trueDoorImg = ""
+    trueDoorImg = spritesheet.subsurface((5*32,0,RESOLUTION,RESOLUTION))
+    trueDoorImg = pygame.transform.scale(trueDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(trueDoorImg, (refX,refY))
 
 def fakeDoor(refX, refY):
-    fakeDoorImg = ""
+    fakeDoorImg = spritesheet.subsurface((6*32,0,RESOLUTION,RESOLUTION))
+    fakeDoorImg = pygame.transform.scale(fakeDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(fakeDoorImg, (refX, refY))
 
 def message(txt, posX, posY):
@@ -25,14 +27,38 @@ def message(txt, posX, posY):
     screen.blit(text, (posX*SCALE,posY*SCALE))
 
 def isColliding(x1 , y1 , x2 , y2):
-    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    distance = math.sqrt(((x2+RESOLUTION/2) - (x1+RESOLUTION/2)) ** 2 + ((y2+RESOLUTION/2) - (y1+RESOLUTION/2)) ** 2)
     if distance < 45:
         return True
     else:
         return False
 
-def openDoor():
-    return False
+def nextLevel():
+
+    global level
+    global textLevel
+    global playerX
+    global playerY
+    global stage
+    global counter
+    global textCounter
+    global exitLeft
+    global gameState
+
+    level += 1
+    if level > 2:
+        gameState = "VITORIA"
+    textLevel = "Sala" + str(level).rjust(2)
+
+    playerX = playerX0
+    playerY = playerY0
+    stage = pygame.image.load("stage.png")
+    stage = pygame.transform.scale(stage, (WIDTH * SCALE, HEIGHT * SCALE))
+    counter = 30
+    textCounter = str(counter).rjust(3)
+    exitLeft = randint(0, 1)
+
+
 
 pygame.init()
 
@@ -48,17 +74,30 @@ stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE),0,32)
 timer = pygame.time.Clock()
+level = 1
+textLevel = "Sala" + str(level).rjust(2)
 
 gameState = "NORMAL"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
-counter = 30
+counter = 60
 textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
 
-playerX = 150*SCALE
-playerY = 170*SCALE
+playerX0 = 150*SCALE
+playerY0 = 170*SCALE
+
+playerX = playerX0
+playerY = playerY0
+
+trueDoorX = 0
+trueDoorY = 128*SCALE
+
+fakeDoorX = 0
+fakeDoorY = 128*SCALE
+
 speed = 1
+runningCounter = True
 playerUp = False
 playerDown = False
 playerRight = False
@@ -71,14 +110,15 @@ while running:
         screen.fill((0, 0, 0))
         screen.blit(stage,(0,0))
         if exitLeft == 1:
-            pygame.draw.rect(screen, (0, 0, 255), (176*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
-            pygame.draw.rect(screen, (255, 0, 0), (306*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            trueDoorX = 176*SCALE
+            fakeDoorX = 306*SCALE
+
         else:
-            pygame.draw.rect(screen, (255, 0, 0), (176*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
-            pygame.draw.rect(screen, (0, 0, 255), (306*SCALE, 128*SCALE, RESOLUTION*SCALE, RESOLUTION*SCALE), 0)
+            trueDoorX = 306*SCALE
+            fakeDoorX = 176*SCALE
 
         for event in pygame.event.get():
-            if event.type == pygame.USEREVENT:
+            if event.type == pygame.USEREVENT and runningCounter:
                 counter -= 1
                 if counter > -1:
                     textCounter = str(counter).rjust(3)
@@ -129,7 +169,17 @@ while running:
         if playerY < 0:
             playerY = 0
 
+        if playerAction:
+            if isColliding(playerX, playerY, trueDoorX,trueDoorY):
+                nextLevel()
+            elif isColliding(playerX, playerY, fakeDoorX, fakeDoorY):
+                gameState = "GAME OVER"
+
+        trueDoor(trueDoorX, trueDoorY)
+        fakeDoor(fakeDoorX, fakeDoorY)
         player(playerX, playerY)
+
+        message(textLevel, 30, 10)
         message(textCounter, WIDTH - 30, 10)
     elif gameState == "GAME OVER":
         screen.fill((0,0,0))
