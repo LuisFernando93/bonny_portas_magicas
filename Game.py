@@ -18,12 +18,12 @@ def npcGoldy(refX, refY):
     screen.blit(goldyImg, (refX*SCALE,refY*SCALE))
 
 def trueDoor(refX, refY):
-    trueDoorImg = spritesheet.subsurface((5*32,32,RESOLUTION,RESOLUTION))
+    trueDoorImg = spritesheet.subsurface((32,2*32,RESOLUTION,RESOLUTION))
     trueDoorImg = pygame.transform.scale(trueDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(trueDoorImg, (refX*SCALE,refY*SCALE))
 
 def fakeDoor(refX, refY):
-    fakeDoorImg = spritesheet.subsurface((6*32,32,RESOLUTION,RESOLUTION))
+    fakeDoorImg = spritesheet.subsurface((32,2*32,RESOLUTION,RESOLUTION))
     fakeDoorImg = pygame.transform.scale(fakeDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(fakeDoorImg, (refX*SCALE, refY*SCALE))
 
@@ -39,6 +39,20 @@ def isColliding(x1 , y1 , x2 , y2):
     else:
         return False
 
+def showHint():
+
+    global hintShowed
+    global textHint
+
+    if not hintShowed:
+        i = randint(0,9)
+        if exitLeft == 1:
+            textHint = hintLeft[i]
+            hintShowed = True
+        else:
+            textHint = hintRight[i]
+            hintShowed = True
+
 def nextLevel():
 
     global level
@@ -51,6 +65,7 @@ def nextLevel():
     global exitLeft
     global gameState
     global npcLeft
+    global hintShowed
 
     level += 1
     if level > MAX_LEVEL:
@@ -65,7 +80,7 @@ def nextLevel():
     textCounter = str(counter).rjust(3)
     exitLeft = randint(0, 1)
     npcLeft = randint(0,1)
-
+    hintShowed = False
 
 pygame.init()
 
@@ -76,6 +91,10 @@ WIDTH = 512
 HEIGHT = 256
 SCALE = 2
 RESOLUTION = 32
+
+hintLeft = ["esquerda1","esquerda2","esquerda3","esquerda4","esquerda5","esquerda6","esquerda7","esquerda8","esquerda9","esquerda10"]
+hintRight = ["direita1","direita2","direita3","direita4","direita5","direita6","direita7","direita8","direita9","direita10"]
+
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
@@ -107,6 +126,9 @@ trueDoorY = 128
 
 fakeDoorX = 0
 fakeDoorY = 128
+
+hintShowed = False
+textHint = ""
 
 speed = 1
 runningCounter = True
@@ -192,7 +214,7 @@ while running:
             elif isColliding(playerX, playerY, fakeDoorX, fakeDoorY):
                 gameState = "GAME OVER"
             elif isColliding(playerX,playerY, goldyX, goldyY):
-                #showHint()
+                showHint()
                 print("dica")
 
         trueDoor(trueDoorX, trueDoorY)
@@ -202,6 +224,9 @@ while running:
 
         message(textLevel, 30, 10)
         message(textCounter, WIDTH - 30, 10)
+
+        if hintShowed:
+            message(textHint, WIDTH/2 , 10)
     elif gameState == "GAME OVER":
         screen.fill((0,0,0))
         message("Voce perdeu!",WIDTH/2,HEIGHT/2)
