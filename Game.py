@@ -13,7 +13,10 @@ def player(refX, refY):
 
 def npcGoldy(refX, refY):
 
-    goldyImg = spritesheet.subsurface((5*32,0,RESOLUTION,RESOLUTION))
+    if npcLeft == 1:
+        goldyImg = spritesheet.subsurface((5 * 32, 32, RESOLUTION, RESOLUTION))
+    else:
+        goldyImg = spritesheet.subsurface((5*32,0,RESOLUTION,RESOLUTION))
     goldyImg = pygame.transform.scale(goldyImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
     screen.blit(goldyImg, (refX*SCALE,refY*SCALE))
 
