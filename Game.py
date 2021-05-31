@@ -1,3 +1,4 @@
+import sys
 import pygame
 import math
 from random import randint
@@ -127,6 +128,9 @@ def nextLevel():
     global gameState
     global npcLeft
     global hintShowed
+    global playerImgIndex
+    global npcGoldyImgIndex
+    global doorIdleImgIndex
 
     level += 1
     if level > MAX_LEVEL:
@@ -135,6 +139,9 @@ def nextLevel():
 
     playerX = playerX0
     playerY = playerY0
+    playerImgIndex = 0.0
+    npcGoldyImgIndex = 0.0
+    doorIdleImgIndex = 0.0
     stage = pygame.image.load("stage.png")
     stage = pygame.transform.scale(stage, (WIDTH * SCALE, HEIGHT * SCALE))
     counter = 30
@@ -230,12 +237,18 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    print("seta cima")
+                    arrowY = 18
                 if event.key == pygame.K_DOWN:
-                    print("seta baixo")
-                if event.key == pygame.K_RETURN:
-                    print("aperta")
-
+                    arrowY = 32
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                    if arrowY == 18:
+                        gameState = "NORMAL"
+                    elif arrowY == 32:
+                        pygame.quit()
+                        sys.exit()
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
         arrow(arrowX, arrowY)
 
     elif gameState == "NORMAL":
@@ -263,30 +276,33 @@ while running:
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                if event.key == pygame.K_UP:
                     playerUp = True
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                elif event.key == pygame.K_DOWN:
                     playerDown = True
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     playerRight = True
                     playerLookLeft = False
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                elif event.key == pygame.K_LEFT:
                     playerLeft = True
                     playerLookLeft = True
                 if event.key == pygame.K_SPACE:
                     playerAction = True
 
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                if event.key == pygame.K_UP:
                     playerUp = False
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                elif event.key == pygame.K_DOWN:
                     playerDown = False
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     playerRight = False
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                elif event.key == pygame.K_LEFT:
                     playerLeft = False
                 if event.key == pygame.K_SPACE:
                     playerAction = False
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
         if playerUp:
             playerY -= speed
             playerMoved = True
@@ -342,3 +358,5 @@ while running:
                 running = False
 
     pygame.display.update()
+
+pygame.display.quit()
