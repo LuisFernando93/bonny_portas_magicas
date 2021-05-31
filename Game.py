@@ -2,45 +2,102 @@ import pygame
 import math
 from random import randint
 
+
+def spriteList(refX0, refY0, nSprites):
+
+    sprites = []
+    for i in range(0, (nSprites-1)):
+        sprite = spritesheet.subsurface((refX0 + 32*i, refY0, RESOLUTION, RESOLUTION))
+        sprite = pygame.transform.scale(sprite, (RESOLUTION * SCALE, RESOLUTION * SCALE))
+        sprites.append(sprite)
+    return sprites
+
+
+def arrow(refX, refY):
+
+    global arrowImgIndex
+
+    arrowImgIndex += 0.06
+    if arrowImgIndex >= len(arrowSprites):
+        arrowImgIndex = 0
+
+    arrowImg = arrowSprites[int(arrowImgIndex)]
+    screen.blit(arrowImg, (refX * SCALE, refY * SCALE))
+
+
 def player(refX, refY):
 
+    global playerImgIndex
+    global playerMoved
+
+    if playerMoved:
+        playerImgIndex += 0.2
+        if playerImgIndex >= len(playerSpritesLeft):
+            playerImgIndex = 0.0
+        playerMoved = False
+
     if playerLookLeft:
-        playerImg = spritesheet.subsurface((0, 0, RESOLUTION, RESOLUTION))
+        playerImg = playerSpritesLeft[int(playerImgIndex)]
     else:
-        playerImg = spritesheet.subsurface((0, 32, RESOLUTION, RESOLUTION))
-    playerImg = pygame.transform.scale(playerImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
+        playerImg = playerSpritesRight[int(playerImgIndex)]
+
     screen.blit(playerImg, (refX*SCALE, refY*SCALE))
+
 
 def npcGoldy(refX, refY):
 
+    global npcGoldyImgIndex
+
+    npcGoldyImgIndex += 0.1
+    if npcGoldyImgIndex >= len(npcGoldySpritesLeft):
+        npcGoldyImgIndex = 0.0
+
     if npcLeft == 1:
-        goldyImg = spritesheet.subsurface((5 * 32, 32, RESOLUTION, RESOLUTION))
+        goldyImg = npcGoldySpritesRight[int(npcGoldyImgIndex)]
     else:
-        goldyImg = spritesheet.subsurface((5*32, 0, RESOLUTION, RESOLUTION))
-    goldyImg = pygame.transform.scale(goldyImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
+        goldyImg = npcGoldySpritesLeft[int(npcGoldyImgIndex)]
+
     screen.blit(goldyImg, (refX*SCALE, refY*SCALE))
 
+
 def trueDoor(refX, refY):
-    trueDoorImg = spritesheet.subsurface((32, 2*32, RESOLUTION, RESOLUTION))
-    trueDoorImg = pygame.transform.scale(trueDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
+
+    global doorIdleImgIndex
+
+    doorIdleImgIndex += 0.05
+    if doorIdleImgIndex >= len(doorIdleSprites):
+        doorIdleImgIndex = 0.0
+
+    trueDoorImg = doorIdleSprites[int(doorIdleImgIndex)]
     screen.blit(trueDoorImg, (refX*SCALE, refY*SCALE))
 
+
 def fakeDoor(refX, refY):
-    fakeDoorImg = spritesheet.subsurface((32, 2*32, RESOLUTION, RESOLUTION))
-    fakeDoorImg = pygame.transform.scale(fakeDoorImg, (RESOLUTION * SCALE, RESOLUTION * SCALE))
+
+    global doorIdleImgIndex
+
+    doorIdleImgIndex += 0.08
+    if doorIdleImgIndex >= len(doorIdleSprites):
+        doorIdleImgIndex = 0.0
+
+    fakeDoorImg = doorIdleSprites[int(doorIdleImgIndex)]
     screen.blit(fakeDoorImg, (refX*SCALE, refY*SCALE))
+
 
 def message(txt, posX, posY):
 
     text = font.render(txt, True, (255, 255, 255))
     screen.blit(text, (posX*SCALE, posY*SCALE))
 
+
 def isColliding(x1, y1, x2, y2):
+
     distance = math.sqrt(((x2+RESOLUTION/2) - (x1+RESOLUTION/2)) ** 2 + ((y2+RESOLUTION/2) - (y1+RESOLUTION/2)) ** 2)
     if distance < 20:
         return True
     else:
         return False
+
 
 def showHint():
 
@@ -55,6 +112,7 @@ def showHint():
         else:
             textHint = hintRight[i]
             hintShowed = True
+
 
 def nextLevel():
 
@@ -85,6 +143,7 @@ def nextLevel():
     npcLeft = randint(0, 1)
     hintShowed = False
 
+
 pygame.init()
 
 spritesheet = pygame.image.load("spritesheet.png")
@@ -100,6 +159,8 @@ hintRight = ["direita1", "direita2", "direita3", "direita4", "direita5", "direit
 
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
+menu = pygame.image.load("menu.png")
+menu = pygame.transform.scale(menu, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE), 0, 32)
 timer = pygame.time.Clock()
@@ -107,7 +168,7 @@ level = 1
 MAX_LEVEL = 5
 textLevel = "Sala" + str(level).rjust(2)
 
-gameState = "NORMAL"
+gameState = "MENU"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 counter = 60
@@ -115,14 +176,32 @@ textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
 npcLeft = randint(0, 1)
 
+arrowSprites = spriteList(0, 4*32, 6)
+arrowImgIndex = 0.0
+
+arrowX = 90
+arrowY = 18
+
+playerSpritesLeft = spriteList(0, 0, 5)
+playerSpritesRight = spriteList(0, 32, 5)
+playerImgIndex = 0.0
+playerMoved = False
+
 playerX0 = (WIDTH/2) - (RESOLUTION/2)
 playerY0 = 60
 
 playerX = playerX0
 playerY = playerY0
 
+npcGoldySpritesLeft = spriteList(160, 0, 6)
+npcGoldySpritesRight = spriteList(160, 32, 6)
+npcGoldyImgIndex = 0.0
+
 goldyX = 8
 goldyY = 59
+
+doorIdleSprites = spriteList(0, 64, 12)
+doorIdleImgIndex = 0.0
 
 trueDoorX = 0
 trueDoorY = 33
@@ -143,8 +222,23 @@ playerAction = False
 playerLookLeft = True
 
 while running:
-    if gameState == "NORMAL":
-        screen.fill((0, 0, 0))
+    if gameState == "MENU":
+        screen.blit(menu, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    print("seta cima")
+                if event.key == pygame.K_DOWN:
+                    print("seta baixo")
+                if event.key == pygame.K_RETURN:
+                    print("aperta")
+
+        arrow(arrowX, arrowY)
+
+    elif gameState == "NORMAL":
         screen.blit(stage, (0, 0))
 
         if exitLeft == 1:
@@ -195,12 +289,16 @@ while running:
                     playerAction = False
         if playerUp:
             playerY -= speed
+            playerMoved = True
         if playerDown:
             playerY += speed
+            playerMoved = True
         if playerRight:
             playerX += speed
+            playerMoved = True
         if playerLeft:
             playerX -= speed
+            playerMoved = True
 
         if playerX > 108:
             playerX = 108
