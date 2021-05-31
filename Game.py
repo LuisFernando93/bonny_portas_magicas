@@ -142,9 +142,9 @@ def nextLevel():
     playerImgIndex = 0.0
     npcGoldyImgIndex = 0.0
     doorIdleImgIndex = 0.0
-    stage = pygame.image.load("stage.png")
-    stage = pygame.transform.scale(stage, (WIDTH * SCALE, HEIGHT * SCALE))
-    counter = 30
+    counter = 60 - (level - 1)*COUNTER_REDUCTION
+    if counter < COUNTER_MIN:
+        counter = COUNTER_MIN
     textCounter = str(counter).rjust(3)
     exitLeft = randint(0, 1)
     npcLeft = randint(0, 1)
@@ -168,17 +168,23 @@ stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 menu = pygame.image.load("menu.png")
 menu = pygame.transform.scale(menu, (WIDTH*SCALE, HEIGHT*SCALE))
+gameOver = pygame.image.load("gameover.png")
+gameOver = pygame.transform.scale(gameOver, (WIDTH*SCALE, HEIGHT*SCALE))
+credit = pygame.image.load("credits.png")
+credit = pygame.transform.scale(credit, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE), 0, 32)
 timer = pygame.time.Clock()
 level = 1
-MAX_LEVEL = 5
+MAX_LEVEL = 10
 textLevel = "Sala" + str(level).rjust(2)
 
 gameState = "MENU"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 counter = 60
+COUNTER_REDUCTION = 5
+COUNTER_MIN = 5
 textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
 npcLeft = randint(0, 1)
@@ -230,7 +236,6 @@ playerLookLeft = True
 
 while running:
     if gameState == "MENU":
-        screen.blit(menu, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -249,9 +254,11 @@ while running:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+        screen.blit(menu, (0, 0))
         arrow(arrowX, arrowY)
 
     elif gameState == "NORMAL":
+        arrowImgIndex = 0.0
         screen.blit(stage, (0, 0))
 
         if exitLeft == 1:
@@ -332,7 +339,6 @@ while running:
                 gameState = "GAME OVER"
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
-                print("dica")
 
         trueDoor(trueDoorX, trueDoorY)
         fakeDoor(fakeDoorX, fakeDoorY)
@@ -344,18 +350,36 @@ while running:
 
         if hintShowed:
             message(textHint, WIDTH/2, 5)
+
     elif gameState == "GAME OVER":
-        screen.fill((0, 0, 0))
-        message("Voce perdeu!", WIDTH/2, HEIGHT/2)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                    gameState = "MENU"
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+        screen.blit(gameOver, (0, 0))
+        arrow(32, 50)
+
     elif gameState == "VITORIA":
-        screen.fill((0, 0, 0))
-        message("Voce venceu!", WIDTH / 2, HEIGHT / 2)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                    gameState = "MENU"
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+        screen.blit(credit, (0, 0))
+        arrow(33, 63)
 
     pygame.display.update()
 
