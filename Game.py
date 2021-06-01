@@ -88,7 +88,9 @@ def fakeDoor(refX, refY):
 def message(txt, posX, posY):
 
     text = font.render(txt, True, (255, 255, 255))
-    screen.blit(text, (posX*SCALE, posY*SCALE))
+    textRect = text.get_rect()
+    textRect.center = (posX*SCALE, posY*SCALE)
+    screen.blit(text, textRect)
 
 
 def isColliding(x1, y1, x2, y2):
@@ -106,7 +108,7 @@ def showHint():
     global textHint
 
     if not hintShowed:
-        i = randint(0, 9)
+        i = randint(0, 11)
         if exitLeft == 1:
             textHint = hintLeft[i]
             hintShowed = True
@@ -161,8 +163,34 @@ HEIGHT = 96
 SCALE = 6
 RESOLUTION = 32
 
-hintLeft = ["esquerda1", "esquerda2", "esquerda3", "esquerda4", "esquerda5", "esquerda6", "esquerda7", "esquerda8", "esquerda9", "esquerda10"]
-hintRight = ["direita1", "direita2", "direita3", "direita4", "direita5", "direita6", "direita7", "direita8", "direita9", "direita10"]
+hintLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esquerda ou à direita do rei?",
+            "Para que lado a torre de pisa se inclina?",
+            "Qual hemisfério do cérebro  atua no raciocínio lógico?",
+            "Qual lado começamos a leitura de um livro?",
+            "Se você move seu braço direito, que lado do seu cérebro é ativado?",
+            "O oposto de direita é esquerda, a porta é o oposto do oposto de esquerda.",
+            "Em Resident Evil 7 Ethan Winters perde qual mão?",
+            "A pílula azul em matrix, da ignorância abençoada, está em qual mão?",
+            "Na saga harry potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
+            "A personagem Rachel Amber, do jogo Life is strange, usa o brinco de penas em qual das orelhas?",
+            "Não quero ajudar você dessa vez. Boa sorte!",
+            "Hidari"]
+
+hintRight = ["Em qual mão a estátua da liberdade está segurando a tocha?",
+             "Qual hemisfério do cérebro humano atua na parte esquerda do corpo?",
+             "Qual hemisfério do cérebro atua na função da imaginação?",
+             "Alemanha fica à direita ou à esquerda da Bélgica?",
+             "O Sol nasce em qual direção?",
+             "Em qual dos olhos fica a cicatriz do protagonista de God of War?",
+             "Qual a mão que Anakin Skywalker perde em Star Wars Ep 2?",
+             "De qual lado começamos a ler um mangá?",
+             "Que mão é colocada no peito durante o hino?",
+             "Qual a última tecla direcional do código Konami?",
+             "Não quero ajudar você dessa vez. Boa sorte!",
+             "Migi"]
+
+#hintLeft = ["esquerda1", "esquerda2", "esquerda3", "esquerda4", "esquerda5", "esquerda6", "esquerda7", "esquerda8", "esquerda9", "esquerda10", "esquerda11", "esquerda12"]
+#hintRight = ["direita1", "direita2", "direita3", "direita4", "direita5", "direita6", "direita7", "direita8", "direita9", "direita10", "direita11", "direita12"]
 
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
@@ -214,6 +242,7 @@ goldyX = 8
 goldyY = 59
 
 doorIdleSprites = spriteList(0, 64, 12)
+doorOpenSprites = spriteList(0, 96, 10)
 doorIdleImgIndex = 0.0
 
 trueDoorX = 0
@@ -349,7 +378,7 @@ while running:
         message(textCounter, WIDTH - 20, 5)
 
         if hintShowed:
-            message(textHint, WIDTH/2, 5)
+            message(textHint, WIDTH/2, HEIGHT - 5)
 
     elif gameState == "GAME OVER":
 
