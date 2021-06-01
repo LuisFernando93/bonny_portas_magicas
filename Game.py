@@ -108,18 +108,58 @@ def showHint():
     global textHint
 
     if not hintShowed:
-        i = randint(0, 11)
         if exitLeft == 1:
+            i = randint(0, len(hintLeft) - 1)
             textHint = hintLeft[i]
+            hintLeft.remove(textHint)
             hintShowed = True
         else:
+            i = randint(0, len(hintRight) - 1)
             textHint = hintRight[i]
+            hintRight.remove(textHint)
             hintShowed = True
 
 
 def nextLevel():
 
     global level
+    global gameState
+
+    level += 1
+    if level > MAX_LEVEL:
+        gameState = "VITORIA"
+
+    newLevel(level)
+
+
+def newGame():
+
+    global level
+    global hintRight
+    global hintLeft
+    global runningCounter
+    global playerUp
+    global playerDown
+    global playerRight
+    global playerLeft
+    global playerAction
+    global playerLookLeft
+
+    runningCounter = True
+    playerUp = False
+    playerDown = False
+    playerRight = False
+    playerLeft = False
+    playerAction = False
+    playerLookLeft = True
+    level = 1
+    hintRight = databaseRight
+    hintLeft = databaseLeft
+    newLevel(level)
+
+
+def newLevel(refLevel):
+
     global textLevel
     global playerX
     global playerY
@@ -127,24 +167,20 @@ def nextLevel():
     global counter
     global textCounter
     global exitLeft
-    global gameState
     global npcLeft
     global hintShowed
     global playerImgIndex
     global npcGoldyImgIndex
     global doorIdleImgIndex
 
-    level += 1
-    if level > MAX_LEVEL:
-        gameState = "VITORIA"
-    textLevel = "Sala" + str(level).rjust(2)
+    textLevel = "Sala" + str(refLevel).rjust(2)
 
     playerX = playerX0
     playerY = playerY0
     playerImgIndex = 0.0
     npcGoldyImgIndex = 0.0
     doorIdleImgIndex = 0.0
-    counter = 60 - (level - 1)*COUNTER_REDUCTION
+    counter = 60 - (refLevel - 1) * COUNTER_REDUCTION
     if counter < COUNTER_MIN:
         counter = COUNTER_MIN
     textCounter = str(counter).rjust(3)
@@ -157,40 +193,39 @@ pygame.init()
 
 spritesheet = pygame.image.load("spritesheet.png")
 
-
 WIDTH = 160
 HEIGHT = 96
 SCALE = 6
 RESOLUTION = 32
 
-hintLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esquerda ou à direita do rei?",
-            "Para que lado a torre de pisa se inclina?",
-            "Qual hemisfério do cérebro  atua no raciocínio lógico?",
-            "Qual lado começamos a leitura de um livro?",
-            "Se você move seu braço direito, que lado do seu cérebro é ativado?",
-            "O oposto de direita é esquerda, a porta é o oposto do oposto de esquerda.",
-            "Em Resident Evil 7 Ethan Winters perde qual mão?",
-            "A pílula azul em matrix, da ignorância abençoada, está em qual mão?",
-            "Na saga harry potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
-            "A personagem Rachel Amber, do jogo Life is strange, usa o brinco de penas em qual das orelhas?",
-            "Não quero ajudar você dessa vez. Boa sorte!",
-            "Hidari"]
+databaseLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esquerda ou à direita do rei?",
+                "Para que lado a torre de pisa se inclina?",
+                "Qual hemisfério do cérebro  atua no raciocínio lógico?",
+                "Qual lado começamos a leitura de um livro?",
+                "Se você move seu braço direito, que lado do seu cérebro é ativado?",
+                "O oposto de direita é esquerda, a porta é o oposto do oposto de esquerda.",
+                "Em Resident Evil 7 Ethan Winters perde qual mão?",
+                "A pílula azul em matrix, da ignorância abençoada, está em qual mão?",
+                "Na saga harry potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
+                "A personagem Rachel Amber, do jogo Life is strange, usa o brinco de penas em qual das orelhas?",
+                "Não quero ajudar você dessa vez. Boa sorte!",
+                "Hidari"]
 
-hintRight = ["Em qual mão a estátua da liberdade está segurando a tocha?",
-             "Qual hemisfério do cérebro humano atua na parte esquerda do corpo?",
-             "Qual hemisfério do cérebro atua na função da imaginação?",
-             "Alemanha fica à direita ou à esquerda da Bélgica?",
-             "O Sol nasce em qual direção?",
-             "Em qual dos olhos fica a cicatriz do protagonista de God of War?",
-             "Qual a mão que Anakin Skywalker perde em Star Wars Ep 2?",
-             "De qual lado começamos a ler um mangá?",
-             "Que mão é colocada no peito durante o hino?",
-             "Qual a última tecla direcional do código Konami?",
-             "Não quero ajudar você dessa vez. Boa sorte!",
-             "Migi"]
+databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?",
+                 "Qual hemisfério do cérebro humano atua na parte esquerda do corpo?",
+                 "Qual hemisfério do cérebro atua na função da imaginação?",
+                 "Alemanha fica à direita ou à esquerda da Bélgica?",
+                 "O Sol nasce em qual direção?",
+                 "Em qual dos olhos fica a cicatriz do protagonista de God of War?",
+                 "Qual a mão que Anakin Skywalker perde em Star Wars Ep 2?",
+                 "De qual lado começamos a ler um mangá?",
+                 "Que mão é colocada no peito durante o hino?",
+                 "Qual a última tecla direcional do código Konami?",
+                 "Não quero ajudar você dessa vez. Boa sorte!",
+                 "Migi"]
 
-#hintLeft = ["esquerda1", "esquerda2", "esquerda3", "esquerda4", "esquerda5", "esquerda6", "esquerda7", "esquerda8", "esquerda9", "esquerda10", "esquerda11", "esquerda12"]
-#hintRight = ["direita1", "direita2", "direita3", "direita4", "direita5", "direita6", "direita7", "direita8", "direita9", "direita10", "direita11", "direita12"]
+hintLeft = []
+hintRight = []
 
 stage = pygame.image.load("stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
@@ -276,6 +311,7 @@ while running:
                     arrowY = 32
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if arrowY == 18:
+                        newGame()
                         gameState = "NORMAL"
                     elif arrowY == 32:
                         pygame.quit()
@@ -387,6 +423,8 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                    level = 1
+                    newLevel(level)
                     gameState = "MENU"
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
