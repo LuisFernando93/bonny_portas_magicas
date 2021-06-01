@@ -127,7 +127,7 @@ def nextLevel():
 
     level += 1
     if level > MAX_LEVEL:
-        gameState = "VITORIA"
+        gameState = "VICTORY"
 
     newLevel(level)
 
@@ -188,10 +188,33 @@ def newLevel(refLevel):
     npcLeft = randint(0, 1)
     hintShowed = False
 
+def changeGameState(refGameState):
+
+    global gameState
+
+    gameState = refGameState
+    playSoundtrack(refGameState)
+
+
+def playSoundtrack(refGameState):
+
+    for sound in soundtrack:
+        sound.stop()
+
+    if refGameState == "MENU":
+        soundtrack[0].play(-1)
+    elif refGameState == "GAME":
+        soundtrack[1].play(-1)
+    elif refGameState == "GAME OVER":
+        soundtrack[2].play(-1)
+    elif refGameState == "VICTORY":
+        soundtrack[0].play(-1)
+
 
 pygame.init()
+pygame.mixer.init()
 
-spritesheet = pygame.image.load("spritesheet.png")
+spritesheet = pygame.image.load("res/image/spritesheet.png")
 
 WIDTH = 160
 HEIGHT = 96
@@ -227,13 +250,20 @@ databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?"
 hintLeft = []
 hintRight = []
 
-stage = pygame.image.load("stage.png")
+soundtrack = []
+soundtrack.append(pygame.mixer.Sound("res/audio/menu.mp3"))
+soundtrack.append(pygame.mixer.Sound("res/audio/level.mp3"))
+soundtrack.append(pygame.mixer.Sound("res/audio/gameover.mp3"))
+
+
+
+stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
-menu = pygame.image.load("menu.png")
+menu = pygame.image.load("res/image/menu.png")
 menu = pygame.transform.scale(menu, (WIDTH*SCALE, HEIGHT*SCALE))
-gameOver = pygame.image.load("gameover.png")
+gameOver = pygame.image.load("res/image/gameover.png")
 gameOver = pygame.transform.scale(gameOver, (WIDTH*SCALE, HEIGHT*SCALE))
-credit = pygame.image.load("credits.png")
+credit = pygame.image.load("res/image/credits.png")
 credit = pygame.transform.scale(credit, (WIDTH*SCALE, HEIGHT*SCALE))
 font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE), 0, 32)
@@ -298,6 +328,8 @@ playerLeft = False
 playerAction = False
 playerLookLeft = True
 
+playSoundtrack(gameState)
+
 while running:
     if gameState == "MENU":
 
@@ -312,7 +344,7 @@ while running:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if arrowY == 18:
                         newGame()
-                        gameState = "NORMAL"
+                        changeGameState("GAME")
                     elif arrowY == 32:
                         pygame.quit()
                         sys.exit()
@@ -322,7 +354,7 @@ while running:
         screen.blit(menu, (0, 0))
         arrow(arrowX, arrowY)
 
-    elif gameState == "NORMAL":
+    elif gameState == "GAME":
         arrowImgIndex = 0.0
         screen.blit(stage, (0, 0))
 
@@ -344,7 +376,7 @@ while running:
                 if counter > -1:
                     textCounter = str(counter).rjust(3)
                 else:
-                    gameState = "GAME OVER"
+                    changeGameState("GAME OVER")
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -401,7 +433,7 @@ while running:
             if isColliding(playerX, playerY, trueDoorX, trueDoorY):
                 nextLevel()
             elif isColliding(playerX, playerY, fakeDoorX, fakeDoorY):
-                gameState = "GAME OVER"
+                changeGameState("GAME OVER")
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
 
@@ -423,9 +455,7 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                    level = 1
-                    newLevel(level)
-                    gameState = "MENU"
+                    changeGameState("MENU")
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -433,14 +463,14 @@ while running:
         screen.blit(gameOver, (0, 0))
         arrow(32, 50)
 
-    elif gameState == "VITORIA":
+    elif gameState == "VICTORY":
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                    gameState = "MENU"
+                    changeGameState("MENU")
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
