@@ -127,7 +127,7 @@ def nextLevel():
 
     level += 1
     if level > MAX_LEVEL:
-        gameState = "VICTORY"
+        changeGameState("VICTORY")
 
     newLevel(level)
 
@@ -206,9 +206,10 @@ def playSoundtrack(refGameState):
     elif refGameState == "GAME":
         soundtrack[1].play(-1)
     elif refGameState == "GAME OVER":
+        sfx[0].play(0)
         soundtrack[2].play(-1)
     elif refGameState == "VICTORY":
-        soundtrack[0].play(-1)
+        soundtrack[3].play(-1)
 
 
 pygame.init()
@@ -254,8 +255,10 @@ soundtrack = []
 soundtrack.append(pygame.mixer.Sound("res/audio/menu.mp3"))
 soundtrack.append(pygame.mixer.Sound("res/audio/level.mp3"))
 soundtrack.append(pygame.mixer.Sound("res/audio/gameover.mp3"))
+soundtrack.append(pygame.mixer.Sound("res/audio/happyend.mp3"))
 
-
+sfx = []
+sfx.append(pygame.mixer.Sound("res/audio/scream.mp3"))
 
 stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
