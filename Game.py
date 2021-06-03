@@ -339,7 +339,7 @@ goldyX = 8
 goldyY = 59
 
 doorIdleSprites = spriteList(0, 64, 12)
-doorOpenSprites = spriteList(0, 96, 10)
+doorOpenSprites = spriteList(0, 96, 9)
 doorIdleImgIndex = 0.0
 doorOpenImgIndex = 0.0
 
@@ -393,7 +393,6 @@ while running:
 
     elif gameState == "GAME":
         arrowImgIndex = 0.0
-        screen.blit(stage, (0, 0))
 
         if exitLeft == 1:
             trueDoorX = doorPosXLeft
@@ -476,6 +475,7 @@ while running:
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
 
+        screen.blit(stage, (0, 0))
         door(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
         door(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
         npcGoldy(goldyX, goldyY)
@@ -488,10 +488,14 @@ while running:
             message(textHint, WIDTH/2, HEIGHT - 5)
 
     elif gameState == "ANIMATION DOOR":
-        screen.blit(stage, (0, 0))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
 
         runningCounter = False
         doorIdleImgIndex = 0.0
@@ -532,6 +536,7 @@ while running:
                 closeFake = False
                 changeGameStateAndSoundtrack("GAME OVER")
 
+        screen.blit(stage, (0, 0))
         door(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
         door(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
         npcGoldy(goldyX, goldyY)
