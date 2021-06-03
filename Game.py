@@ -252,7 +252,11 @@ databaseLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esq
                 "Na saga harry potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
                 "A personagem Rachel Amber, do jogo Life is strange, usa o brinco de penas em qual das orelhas?",
                 "Não quero ajudar você dessa vez. Boa sorte!",
-                "Hidari"]
+                "Hidari",
+                "No filme de 'Alice no país das maravilhas', qual dos olhos do Chapeleiro Maluco é verde?",
+                "Zuko, de 'Avatar', tem qual lado do rosto queimado?",
+                "She-ra ergue sua espada com qual das mãos?",
+                "Gauche"]
 
 databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?",
                  "Qual hemisfério do cérebro humano atua na parte esquerda do corpo?",
@@ -265,7 +269,11 @@ databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?"
                  "Que mão é colocada no peito durante o hino?",
                  "Qual a última tecla direcional do código Konami?",
                  "Não quero ajudar você dessa vez. Boa sorte!",
-                 "Migi"]
+                 "Migi",
+                 "Donna Beneviento, de 'Resident Evil', tem qual lado do rosto infectado?",
+                 "Qual a posição da espada na estátua da Mãe Rússia, em Moscou?",
+                 "Finn, de 'Hora da Aventura' perde qual braço",
+                 "Droite"]
 
 hintLeft = []
 hintRight = []
@@ -287,14 +295,14 @@ font = pygame.font.SysFont("Consolas", 20)
 screen = pygame.display.set_mode((WIDTH*SCALE, HEIGHT*SCALE), 0, 32)
 timer = pygame.time.Clock()
 level = 1
-MAX_LEVEL = 10
+MAX_LEVEL = 15
 textLevel = "Sala" + str(level).rjust(2)
 
 gameState = "MENU"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 counter = 60
-COUNTER_REDUCTION = 5
+COUNTER_REDUCTION = 4
 COUNTER_MIN = 5
 textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
