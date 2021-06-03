@@ -61,41 +61,12 @@ def npcGoldy(refX, refY):
     screen.blit(goldyImg, (refX*SCALE, refY*SCALE))
 
 
-def trueDoor(refX, refY, opn, isOpen, close):
+def door(refX, refY, openDoor, isOpen, closeDoor):
 
     global doorIdleImgIndex
     global doorOpenImgIndex
     global openTrue
     global isOpenTrue
-    global animationDoorEnd
-
-    if opn or isOpen or close:
-        if opn:
-            doorOpenImgIndex += 0.05
-            if doorOpenImgIndex >= len(doorOpenSprites)-1:
-                doorOpenImgIndex = len(doorOpenSprites)-1
-                openTrue = False
-                isOpenTrue = True
-        if close:
-            doorOpenImgIndex -= 0.05
-            if doorOpenImgIndex <= 0:
-                doorOpenImgIndex = 0
-                animationDoorEnd = True
-        doorImg = doorOpenSprites[int(doorOpenImgIndex)]
-    else:
-
-        doorIdleImgIndex += 0.05
-        if doorIdleImgIndex >= len(doorIdleSprites) - 1:
-            doorIdleImgIndex = 0.0
-        doorImg = doorIdleSprites[int(doorIdleImgIndex)]
-
-    screen.blit(doorImg, (refX*SCALE, refY*SCALE))
-
-
-def fakeDoor(refX, refY, openDoor, isOpen, closeDoor):
-
-    global doorIdleImgIndex
-    global doorOpenImgIndex
     global openFake
     global isOpenFake
     global animationDoorEnd
@@ -105,8 +76,12 @@ def fakeDoor(refX, refY, openDoor, isOpen, closeDoor):
             doorOpenImgIndex += 0.05
             if doorOpenImgIndex >= len(doorOpenSprites)-1:
                 doorOpenImgIndex = len(doorOpenSprites)-1
-                openFake = False
-                isOpenFake = True
+                if openTrue:
+                    openTrue = False
+                    isOpenTrue = True
+                elif openFake:
+                    openFake = False
+                    isOpenFake = True
         if closeDoor:
             doorOpenImgIndex -= 0.05
             if doorOpenImgIndex <= 0:
@@ -501,8 +476,8 @@ while running:
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
 
-        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
-        fakeDoor(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
+        door(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
+        door(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
         npcGoldy(goldyX, goldyY)
         player(playerX, playerY)
 
@@ -557,8 +532,8 @@ while running:
                 closeFake = False
                 changeGameStateAndSoundtrack("GAME OVER")
 
-        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
-        fakeDoor(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
+        door(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
+        door(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
         npcGoldy(goldyX, goldyY)
         if playerY > doorPosY:
             player(playerX, playerY)
