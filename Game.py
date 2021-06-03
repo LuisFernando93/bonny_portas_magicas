@@ -7,7 +7,7 @@ from random import randint
 def spriteList(refX0, refY0, nSprites):
 
     sprites = []
-    for i in range(0, (nSprites-1)):
+    for i in range(0, (nSprites)):
         sprite = spritesheet.subsurface((refX0 + 32*i, refY0, RESOLUTION, RESOLUTION))
         sprite = pygame.transform.scale(sprite, (RESOLUTION * SCALE, RESOLUTION * SCALE))
         sprites.append(sprite)
@@ -33,7 +33,7 @@ def player(refX, refY):
 
     if playerMoved:
         playerImgIndex += 0.2
-        if playerImgIndex >= len(playerSpritesLeft):
+        if playerImgIndex >= len(playerSpritesLeft)-1:
             playerImgIndex = 0.0
         playerMoved = False
 
@@ -50,7 +50,7 @@ def npcGoldy(refX, refY):
     global npcGoldyImgIndex
 
     npcGoldyImgIndex += 0.1
-    if npcGoldyImgIndex >= len(npcGoldySpritesLeft):
+    if npcGoldyImgIndex >= len(npcGoldySpritesLeft)-1:
         npcGoldyImgIndex = 0.0
 
     if npcLeft == 1:
@@ -61,28 +61,55 @@ def npcGoldy(refX, refY):
     screen.blit(goldyImg, (refX*SCALE, refY*SCALE))
 
 
-def trueDoor(refX, refY):
+def trueDoor(refX, refY, open, isOpen):
 
     global doorIdleImgIndex
+    global doorOpenImgIndex
+    global openTrue
+    global isOpenTrue
 
-    doorIdleImgIndex += 0.05
-    if doorIdleImgIndex >= len(doorIdleSprites):
-        doorIdleImgIndex = 0.0
+    if open or isOpen:
+        if open:
+            doorOpenImgIndex += 0.02
+            if doorOpenImgIndex >= len(doorOpenSprites)-1:
+                doorOpenImgIndex = len(doorOpenSprites)-1
+                openTrue = False
+                isOpenTrue = True
+        doorImg = doorOpenSprites[int(doorOpenImgIndex)]
+    else:
 
-    trueDoorImg = doorIdleSprites[int(doorIdleImgIndex)]
-    screen.blit(trueDoorImg, (refX*SCALE, refY*SCALE))
+        doorIdleImgIndex += 0.05
+        if doorIdleImgIndex >= len(doorIdleSprites) - 1:
+            doorIdleImgIndex = 0.0
+        doorImg = doorIdleSprites[int(doorIdleImgIndex)]
+
+    screen.blit(doorImg, (refX*SCALE, refY*SCALE))
 
 
-def fakeDoor(refX, refY):
+def fakeDoor(refX, refY, open, isOpen, close):
 
     global doorIdleImgIndex
+    global doorOpenImgIndex
+    global openFake
+    global isOpenFake
+    global closeFake
 
-    doorIdleImgIndex += 0.08
-    if doorIdleImgIndex >= len(doorIdleSprites):
-        doorIdleImgIndex = 0.0
+    if open or isOpen:
+        if open:
+            doorOpenImgIndex += 0.02
+            if doorOpenImgIndex >= len(doorOpenSprites)-1:
+                doorOpenImgIndex = len(doorOpenSprites)-1
+                openFake = False
+                isOpenFake = True
+        doorImg = doorOpenSprites[int(doorOpenImgIndex)]
+    else:
 
-    fakeDoorImg = doorIdleSprites[int(doorIdleImgIndex)]
-    screen.blit(fakeDoorImg, (refX*SCALE, refY*SCALE))
+        doorIdleImgIndex += 0.05
+        if doorIdleImgIndex >= len(doorIdleSprites) - 1:
+            doorIdleImgIndex = 0.0
+        doorImg = doorIdleSprites[int(doorIdleImgIndex)]
+
+    screen.blit(doorImg, (refX*SCALE, refY*SCALE))
 
 
 def message(txt, posX, posY):
@@ -188,6 +215,7 @@ def newLevel(refLevel):
     npcLeft = randint(0, 1)
     hintShowed = False
 
+
 def changeGameState(refGameState):
 
     global gameState
@@ -214,6 +242,9 @@ def playSoundtrack(refGameState):
 
 pygame.init()
 pygame.mixer.init()
+
+pygame.display.set_caption("Bonny e as Portas Mágicas")
+pygame.display.set_icon(pygame.image.load("res/image/icon.png"))
 
 spritesheet = pygame.image.load("res/image/spritesheet.png")
 
@@ -251,14 +282,10 @@ databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?"
 hintLeft = []
 hintRight = []
 
-soundtrack = []
-soundtrack.append(pygame.mixer.Sound("res/audio/menu.mp3"))
-soundtrack.append(pygame.mixer.Sound("res/audio/level.mp3"))
-soundtrack.append(pygame.mixer.Sound("res/audio/gameover.mp3"))
-soundtrack.append(pygame.mixer.Sound("res/audio/happyend.mp3"))
+soundtrack = [pygame.mixer.Sound("res/audio/menu.mp3"), pygame.mixer.Sound("res/audio/level.mp3"),
+              pygame.mixer.Sound("res/audio/gameover.mp3"), pygame.mixer.Sound("res/audio/happyend.mp3")]
 
-sfx = []
-sfx.append(pygame.mixer.Sound("res/audio/scream.mp3"))
+sfx = [pygame.mixer.Sound("res/audio/scream.mp3")]
 
 stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
@@ -275,7 +302,7 @@ level = 1
 MAX_LEVEL = 10
 textLevel = "Sala" + str(level).rjust(2)
 
-gameState = "MENU"
+gameState = "ANIMATION DOOR"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 counter = 60
@@ -284,6 +311,18 @@ COUNTER_MIN = 5
 textCounter = str(counter).rjust(3)
 exitLeft = randint(0, 1)
 npcLeft = randint(0, 1)
+
+selectedTrueDoor = False
+selectedFakeDoor = True
+
+openTrue = False
+openFake = False
+
+isOpenTrue = False
+isOpenFake = False
+
+closeTrue = False
+closeFake = False
 
 arrowSprites = spriteList(0, 4*32, 6)
 arrowImgIndex = 0.0
@@ -312,12 +351,17 @@ goldyY = 59
 doorIdleSprites = spriteList(0, 64, 12)
 doorOpenSprites = spriteList(0, 96, 10)
 doorIdleImgIndex = 0.0
+doorOpenImgIndex = 0.0
 
-trueDoorX = 0
-trueDoorY = 33
+doorPosXLeft = 41
+doorPosXRight = 85
+doorPosY = 33
 
-fakeDoorX = 0
-fakeDoorY = 33
+trueDoorX = doorPosXLeft
+trueDoorY = doorPosY
+
+fakeDoorX = doorPosXRight
+fakeDoorY = doorPosY
 
 hintShowed = False
 textHint = ""
@@ -362,11 +406,11 @@ while running:
         screen.blit(stage, (0, 0))
 
         if exitLeft == 1:
-            trueDoorX = 41
-            fakeDoorX = 85
+            trueDoorX = doorPosXLeft
+            fakeDoorX = doorPosXRight
         else:
-            trueDoorX = 85
-            fakeDoorX = 41
+            trueDoorX = doorPosXRight
+            fakeDoorX = doorPosXLeft
 
         if npcLeft == 1:
             goldyX = 8
@@ -435,13 +479,15 @@ while running:
         if playerAction:
             if isColliding(playerX, playerY, trueDoorX, trueDoorY):
                 nextLevel()
+                selectedTrueDoor = True
             elif isColliding(playerX, playerY, fakeDoorX, fakeDoorY):
                 changeGameState("GAME OVER")
+                selectedFakeDoor = True
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
 
-        trueDoor(trueDoorX, trueDoorY)
-        fakeDoor(fakeDoorX, fakeDoorY)
+        trueDoor(trueDoorX, trueDoorY, openTrue)
+        fakeDoor(fakeDoorX, fakeDoorY, openFake)
         npcGoldy(goldyX, goldyY)
         player(playerX, playerY)
 
@@ -450,6 +496,44 @@ while running:
 
         if hintShowed:
             message(textHint, WIDTH/2, HEIGHT - 5)
+
+    elif gameState == "ANIMATION DOOR":
+        screen.blit(stage, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        runningCounter = False
+        doorIdleImgIndex = 0.0
+        if selectedTrueDoor:
+            playerX = trueDoorX
+            playerY = trueDoorY + 10
+            playerImgIndex = 0.0
+            selectedTrueDoor = False
+            openTrue = True
+
+        if selectedFakeDoor:
+            playerX = fakeDoorX
+            playerY = fakeDoorY + 10
+            playerImgIndex = 0.0
+            selectedFakeDoor = False
+            openFake = True
+
+        if isOpenTrue or isOpenFake and playerY > doorPosY:
+            playerY -= speed
+            playerMoved = True
+        elif playerY <= doorPosY:
+            if isOpenTrue:
+                isOpenTrue = False
+                closeTrue = True
+            elif isOpenFake:
+                isOpenFake = False
+                closeFake = True
+
+        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue)
+        fakeDoor(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
+        if playerY > doorPosY:
+            player(playerX, playerY)
 
     elif gameState == "GAME OVER":
 
