@@ -192,6 +192,7 @@ def newLevel(refLevel):
     global stage
     global counter
     global textCounter
+    global runningCounter
     global exitLeft
     global npcLeft
     global hintShowed
@@ -221,6 +222,7 @@ def newLevel(refLevel):
     counter = 60 - (refLevel - 1) * COUNTER_REDUCTION
     if counter < COUNTER_MIN:
         counter = COUNTER_MIN
+    runningCounter = True
     textCounter = str(counter).rjust(3)
     exitLeft = randint(0, 1)
     npcLeft = randint(0, 1)
