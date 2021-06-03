@@ -7,7 +7,7 @@ from random import randint
 def spriteList(refX0, refY0, nSprites):
 
     sprites = []
-    for i in range(0, (nSprites)):
+    for i in range(0, nSprites):
         sprite = spritesheet.subsurface((refX0 + 32*i, refY0, RESOLUTION, RESOLUTION))
         sprite = pygame.transform.scale(sprite, (RESOLUTION * SCALE, RESOLUTION * SCALE))
         sprites.append(sprite)
@@ -61,20 +61,26 @@ def npcGoldy(refX, refY):
     screen.blit(goldyImg, (refX*SCALE, refY*SCALE))
 
 
-def trueDoor(refX, refY, open, isOpen):
+def trueDoor(refX, refY, opn, isOpen, close):
 
     global doorIdleImgIndex
     global doorOpenImgIndex
     global openTrue
     global isOpenTrue
+    global animationDoorEnd
 
-    if open or isOpen:
-        if open:
-            doorOpenImgIndex += 0.02
+    if opn or isOpen or close:
+        if opn:
+            doorOpenImgIndex += 0.05
             if doorOpenImgIndex >= len(doorOpenSprites)-1:
                 doorOpenImgIndex = len(doorOpenSprites)-1
                 openTrue = False
                 isOpenTrue = True
+        if close:
+            doorOpenImgIndex -= 0.05
+            if doorOpenImgIndex <= 0:
+                doorOpenImgIndex = 0
+                animationDoorEnd = True
         doorImg = doorOpenSprites[int(doorOpenImgIndex)]
     else:
 
@@ -86,21 +92,26 @@ def trueDoor(refX, refY, open, isOpen):
     screen.blit(doorImg, (refX*SCALE, refY*SCALE))
 
 
-def fakeDoor(refX, refY, open, isOpen, close):
+def fakeDoor(refX, refY, openDoor, isOpen, closeDoor):
 
     global doorIdleImgIndex
     global doorOpenImgIndex
     global openFake
     global isOpenFake
-    global closeFake
+    global animationDoorEnd
 
-    if open or isOpen:
-        if open:
-            doorOpenImgIndex += 0.02
+    if openDoor or isOpen or closeDoor:
+        if openDoor:
+            doorOpenImgIndex += 0.05
             if doorOpenImgIndex >= len(doorOpenSprites)-1:
                 doorOpenImgIndex = len(doorOpenSprites)-1
                 openFake = False
                 isOpenFake = True
+        if closeDoor:
+            doorOpenImgIndex -= 0.05
+            if doorOpenImgIndex <= 0:
+                doorOpenImgIndex = 0
+                animationDoorEnd = True
         doorImg = doorOpenSprites[int(doorOpenImgIndex)]
     else:
 
@@ -154,7 +165,7 @@ def nextLevel():
 
     level += 1
     if level > MAX_LEVEL:
-        changeGameState("VICTORY")
+        changeGameStateAndSoundtrack("VICTORY")
 
     newLevel(level)
 
@@ -165,20 +176,8 @@ def newGame():
     global hintRight
     global hintLeft
     global runningCounter
-    global playerUp
-    global playerDown
-    global playerRight
-    global playerLeft
-    global playerAction
-    global playerLookLeft
 
     runningCounter = True
-    playerUp = False
-    playerDown = False
-    playerRight = False
-    playerLeft = False
-    playerAction = False
-    playerLookLeft = True
     level = 1
     hintRight = databaseRight
     hintLeft = databaseLeft
@@ -199,11 +198,23 @@ def newLevel(refLevel):
     global playerImgIndex
     global npcGoldyImgIndex
     global doorIdleImgIndex
+    global playerUp
+    global playerDown
+    global playerRight
+    global playerLeft
+    global playerAction
+    global playerLookLeft
 
     textLevel = "Sala" + str(refLevel).rjust(2)
 
     playerX = playerX0
     playerY = playerY0
+    playerUp = False
+    playerDown = False
+    playerRight = False
+    playerLeft = False
+    playerAction = False
+    playerLookLeft = True
     playerImgIndex = 0.0
     npcGoldyImgIndex = 0.0
     doorIdleImgIndex = 0.0
@@ -216,7 +227,7 @@ def newLevel(refLevel):
     hintShowed = False
 
 
-def changeGameState(refGameState):
+def changeGameStateAndSoundtrack(refGameState):
 
     global gameState
 
@@ -302,7 +313,7 @@ level = 1
 MAX_LEVEL = 10
 textLevel = "Sala" + str(level).rjust(2)
 
-gameState = "ANIMATION DOOR"
+gameState = "MENU"
 running = True
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 counter = 60
@@ -313,7 +324,7 @@ exitLeft = randint(0, 1)
 npcLeft = randint(0, 1)
 
 selectedTrueDoor = False
-selectedFakeDoor = True
+selectedFakeDoor = False
 
 openTrue = False
 openFake = False
@@ -323,6 +334,8 @@ isOpenFake = False
 
 closeTrue = False
 closeFake = False
+
+animationDoorEnd = False
 
 arrowSprites = spriteList(0, 4*32, 6)
 arrowImgIndex = 0.0
@@ -391,7 +404,7 @@ while running:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if arrowY == 18:
                         newGame()
-                        changeGameState("GAME")
+                        changeGameStateAndSoundtrack("GAME")
                     elif arrowY == 32:
                         pygame.quit()
                         sys.exit()
@@ -423,7 +436,7 @@ while running:
                 if counter > -1:
                     textCounter = str(counter).rjust(3)
                 else:
-                    changeGameState("GAME OVER")
+                    changeGameStateAndSoundtrack("GAME OVER")
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -478,16 +491,16 @@ while running:
 
         if playerAction:
             if isColliding(playerX, playerY, trueDoorX, trueDoorY):
-                nextLevel()
                 selectedTrueDoor = True
+                gameState = "ANIMATION DOOR"
             elif isColliding(playerX, playerY, fakeDoorX, fakeDoorY):
-                changeGameState("GAME OVER")
                 selectedFakeDoor = True
+                gameState = "ANIMATION DOOR"
             elif isColliding(playerX, playerY, goldyX, goldyY):
                 showHint()
 
-        trueDoor(trueDoorX, trueDoorY, openTrue)
-        fakeDoor(fakeDoorX, fakeDoorY, openFake)
+        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
+        fakeDoor(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
         npcGoldy(goldyX, goldyY)
         player(playerX, playerY)
 
@@ -519,19 +532,32 @@ while running:
             selectedFakeDoor = False
             openFake = True
 
-        if isOpenTrue or isOpenFake and playerY > doorPosY:
-            playerY -= speed
-            playerMoved = True
-        elif playerY <= doorPosY:
-            if isOpenTrue:
-                isOpenTrue = False
-                closeTrue = True
-            elif isOpenFake:
-                isOpenFake = False
-                closeFake = True
+        if isOpenTrue or isOpenFake:
+            if playerY > doorPosY:
+                playerY -= speed
+                playerMoved = True
+            elif playerY <= doorPosY:
+                if isOpenTrue:
+                    isOpenTrue = False
+                    closeTrue = True
+                elif isOpenFake:
+                    isOpenFake = False
+                    closeFake = True
 
-        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue)
+        if animationDoorEnd:
+            if closeTrue:
+                animationDoorEnd = False
+                closeTrue = False
+                gameState = "GAME"
+                nextLevel()
+            elif closeFake:
+                animationDoorEnd = False
+                closeFake = False
+                changeGameStateAndSoundtrack("GAME OVER")
+
+        trueDoor(trueDoorX, trueDoorY, openTrue, isOpenTrue, closeTrue)
         fakeDoor(fakeDoorX, fakeDoorY, openFake, isOpenFake, closeFake)
+        npcGoldy(goldyX, goldyY)
         if playerY > doorPosY:
             player(playerX, playerY)
 
@@ -542,7 +568,7 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                    changeGameState("MENU")
+                    changeGameStateAndSoundtrack("MENU")
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -557,7 +583,7 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                    changeGameState("MENU")
+                    changeGameStateAndSoundtrack("MENU")
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
