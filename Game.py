@@ -241,7 +241,7 @@ HEIGHT = 96
 SCALE = 6
 RESOLUTION = 32
 
-databaseLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esquerda ou à direita do rei?",
+databaseLeft = ["Ao começar um jogo de xadrez, a rainha fica à esquerda ou à direita do rei?",
                 "Para que lado a torre de pisa se inclina?",
                 "Qual hemisfério do cérebro  atua no raciocínio lógico?",
                 "Qual lado começamos a leitura de um livro?",
@@ -249,11 +249,11 @@ databaseLeft = ["Quando o jogador começa o jogo de xadrez, a rainha fica à esq
                 "O oposto de direita é esquerda, a porta é o oposto do oposto de esquerda.",
                 "Em Resident Evil 7 Ethan Winters perde qual mão?",
                 "A pílula azul em matrix, da ignorância abençoada, está em qual mão?",
-                "Na saga harry potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
-                "A personagem Rachel Amber, do jogo Life is strange, usa o brinco de penas em qual das orelhas?",
+                "Na saga Harry Potter, qual olho Alastor Moody, Olho-Tonto, perdeu?",
+                "Rachel Amber, de Life is strange, usa o brinco de penas em qual orelha?",
                 "Não quero ajudar você dessa vez. Boa sorte!",
                 "Hidari",
-                "No filme de 'Alice no país das maravilhas', qual dos olhos do Chapeleiro Maluco é verde?",
+                "Em 'Alice no país das maravilhas', qual dos olhos do Chapeleiro Maluco é verde?",
                 "Zuko, de 'Avatar', tem qual lado do rosto queimado?",
                 "She-ra ergue sua espada com qual das mãos?",
                 "Gauche"]
