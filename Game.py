@@ -180,6 +180,9 @@ def newLevel(refLevel):
     global playerLeft
     global playerAction
     global playerLookLeft
+    global trueDoorX
+    global fakeDoorX
+    global goldyX
 
     textLevel = "Sala" + str(refLevel).rjust(2)
 
@@ -199,8 +202,21 @@ def newLevel(refLevel):
         counter = COUNTER_MIN
     runningCounter = True
     textCounter = str(counter).rjust(3)
+
     exitLeft = randint(0, 1)
+    if exitLeft == 1:
+        trueDoorX = doorPosXLeft
+        fakeDoorX = doorPosXRight
+    else:
+        trueDoorX = doorPosXRight
+        fakeDoorX = doorPosXLeft
+
     npcLeft = randint(0, 1)
+    if npcLeft == 1:
+        goldyX = 8
+    else:
+        goldyX = 120
+
     hintShowed = False
 
 
@@ -401,18 +417,6 @@ while running:
 
     elif gameState == "GAME":
         arrowImgIndex = 0.0
-
-        if exitLeft == 1:
-            trueDoorX = doorPosXLeft
-            fakeDoorX = doorPosXRight
-        else:
-            trueDoorX = doorPosXRight
-            fakeDoorX = doorPosXLeft
-
-        if npcLeft == 1:
-            goldyX = 8
-        else:
-            goldyX = 120
 
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT and runningCounter:
