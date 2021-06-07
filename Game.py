@@ -297,7 +297,7 @@ hintRight = []
 soundtrack = [pygame.mixer.Sound("res/audio/menu.mp3"), pygame.mixer.Sound("res/audio/level.mp3"),
               pygame.mixer.Sound("res/audio/gameover.mp3"), pygame.mixer.Sound("res/audio/happyend.mp3")]
 
-sfx = [pygame.mixer.Sound("res/audio/scream.mp3")]
+sfx = [pygame.mixer.Sound("res/audio/death.mp3"), pygame.mixer.Sound("res/audio/ding.mp3")]
 
 stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
@@ -542,6 +542,7 @@ while running:
                 animationDoorEnd = False
                 closeTrue = False
                 gameState = "GAME"
+                sfx[1].play(0)
                 nextLevel()
             elif closeFake:
                 animationDoorEnd = False
