@@ -303,6 +303,8 @@ stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
 menu = pygame.image.load("res/image/menu.png")
 menu = pygame.transform.scale(menu, (WIDTH*SCALE, HEIGHT*SCALE))
+manual = pygame.image.load("res/image/manual.png")
+manual = pygame.transform.scale(manual, (WIDTH*SCALE, HEIGHT*SCALE))
 gameOver = pygame.image.load("res/image/gameover.png")
 gameOver = pygame.transform.scale(gameOver, (WIDTH*SCALE, HEIGHT*SCALE))
 credit = pygame.image.load("res/image/credits.png")
@@ -337,6 +339,8 @@ closeTrue = False
 closeFake = False
 
 animationDoorEnd = False
+
+menuMode = 1
 
 arrowSprites = spriteList(0, 4*32, 6)
 arrowImgIndex = 0.0
@@ -399,21 +403,32 @@ while running:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    arrowY = 18
+                    if menuMode == 1:
+                        arrowY = 18
                 if event.key == pygame.K_DOWN:
-                    arrowY = 32
+                    if menuMode == 1:
+                        arrowY = 32
                 if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                    if arrowY == 18:
+                    if menuMode == 1:
+                        if arrowY == 18:
+                            menuMode = 2
+                        elif arrowY == 32:
+                            pygame.quit()
+                            sys.exit()
+                    elif menuMode == 2:
                         newGame()
                         changeGameStateAndSoundtrack("GAME")
-                    elif arrowY == 32:
-                        pygame.quit()
-                        sys.exit()
+                        menuMode = 1
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-        screen.blit(menu, (0, 0))
-        arrow(arrowX, arrowY)
+
+        if menuMode == 1:
+            screen.blit(menu, (0, 0))
+            arrow(arrowX, arrowY)
+        elif menuMode == 2:
+            screen.blit(manual, (0, 0))
+            arrow(32, 63)
 
     elif gameState == "GAME":
         arrowImgIndex = 0.0
