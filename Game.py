@@ -232,6 +232,8 @@ def playSoundtrack(refGameState):
 
     for sound in soundtrack:
         sound.stop()
+    for sound in sfx:
+        sound.stop()
 
     if refGameState == "MENU":
         soundtrack[0].play(-1)
@@ -288,7 +290,7 @@ databaseRight = ["Em qual mão a estátua da liberdade está segurando a tocha?"
                  "Migi",
                  "Donna Beneviento, de 'Resident Evil', tem qual lado do rosto infectado?",
                  "Qual a posição da espada na estátua da Mãe Rússia, em Moscou?",
-                 "Finn, de 'Hora da Aventura' perde qual braço",
+                 "Finn, de 'Hora da Aventura' perde qual braço?",
                  "Droite"]
 
 hintLeft = []
@@ -297,7 +299,8 @@ hintRight = []
 soundtrack = [pygame.mixer.Sound("res/audio/menu.mp3"), pygame.mixer.Sound("res/audio/level.mp3"),
               pygame.mixer.Sound("res/audio/gameover.mp3"), pygame.mixer.Sound("res/audio/happyend.mp3")]
 
-sfx = [pygame.mixer.Sound("res/audio/death.mp3"), pygame.mixer.Sound("res/audio/ding.mp3")]
+sfx = [pygame.mixer.Sound("res/audio/death.mp3"), pygame.mixer.Sound("res/audio/ding.mp3"),
+       pygame.mixer.Sound("res/audio/opendoor.mp3"), pygame.mixer.Sound("res/audio/closedoor.mp3")]
 
 stage = pygame.image.load("res/image/stage.png")
 stage = pygame.transform.scale(stage, (WIDTH*SCALE, HEIGHT*SCALE))
@@ -532,6 +535,7 @@ while running:
             playerImgIndex = 0.0
             selectedTrueDoor = False
             openTrue = True
+            sfx[2].play(0)
 
         if selectedFakeDoor:
             playerX = fakeDoorX
@@ -539,18 +543,24 @@ while running:
             playerImgIndex = 0.0
             selectedFakeDoor = False
             openFake = True
+            sfx[2].play(0)
 
         if isOpenTrue or isOpenFake:
+
             if playerY > doorPosY:
                 playerY -= speed
                 playerMoved = True
+
             elif playerY <= doorPosY:
                 if isOpenTrue:
                     isOpenTrue = False
                     closeTrue = True
+                    sfx[3].play(0)
+
                 elif isOpenFake:
                     isOpenFake = False
                     closeFake = True
+                    sfx[3].play(0)
 
         if animationDoorEnd:
             if closeTrue:
