@@ -246,6 +246,13 @@ def playSoundtrack(refGameState):
         soundtrack[3].play(-1)
 
 
+print("Grupo 6")
+print("Eduardo Rocha dos Santos")
+print("Gustavo Mello Herrera")
+print("Laisa Eugenio Severiano")
+print("Luis Fernando Pasquinelli Amaral de Abreu")
+print("Manuela Gonçalves de Oliveira")
+
 pygame.init()
 pygame.mixer.init()
 
